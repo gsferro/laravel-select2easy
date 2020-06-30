@@ -1,6 +1,6 @@
 <?php
 
-namespace Select2Easy;
+namespace Gsferro\Select2Easy;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -23,9 +23,9 @@ class Select2EasyServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom( __DIR__ . '/routes/web.php' );
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
 
-        $this->loadViewsFrom(__DIR__."/resources/views", "select2easy");
+        $this->loadViewsFrom(__DIR__ . "/resources/views", "select2easy");
         $this->publishes([
             __DIR__ . '/public' => public_path('vendor/select2easy'),
         ]);

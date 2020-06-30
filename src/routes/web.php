@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['namespace' => 'Select2Easy\Http\Controllers', 'middleware' => ['web']], function()
+Route::group(['namespace' => 'Gsferro\Select2Easy\Http\Controllers', 'middleware' => ['web']], function()
 {
     Route::get('/select2easy', 'Select2EasyController')->name('select2easy');
 });

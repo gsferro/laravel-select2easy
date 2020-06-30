@@ -6,7 +6,7 @@
  * @action Facilitar o uso de forma generica para uso do plugn select2 ajax
  */
 
-namespace Select2Easy\Http\Traits;
+namespace Gsferro\Select2Easy\Http\Traits;
 
 use Illuminate\Support\Collection;
 

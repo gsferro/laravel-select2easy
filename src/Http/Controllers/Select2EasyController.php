@@ -1,6 +1,6 @@
 <?php
 
-namespace Select2Easy\Http\Controllers;
+namespace Gsferro\Select2Easy\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

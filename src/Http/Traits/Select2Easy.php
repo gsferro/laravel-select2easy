@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @author Guilherme Ferro
+ * @version 1.0
+ * @action Facilitar o uso de forma generica para uso do plugn select2 ajax
+ */
+
+namespace Select2Easy\Http\Traits;
+
+use Illuminate\Support\Collection;
+
+trait Select2Easy
+{
+    // minimo de 6 para paginação pelo plugin select2
+    public function scopeSelect2easy( $query, string $term, int $page, array $select2Search, string $select2Text, int $limitPage = 6 )
+    {
+        // varre os campos que podem ser pesquisados
+        foreach( $select2Search as $field )
+            $query->when( $field, function( $q ) use ( $field, $term ) {
+                return $q->orWhere( $field, 'LIKE', "%{$term}%" );
+            } );
+
+        // seta a posição
+        $offset = ( $page - 1 ) * $limitPage;
+        // busca a pagina
+        $search = $query->skip( $offset )->take( $limitPage )->get();
+
+        // envia pro processamento e devolve pro plugin
+        return $this->resultSet( $search, $select2Text, $limitPage );
+    }
+
+    private function resultSet( Collection $search, $select2Text, $limitPage )
+    {
+        // set array return
+        $resultSet = [];
+
+        // pega os itens
+        foreach( $search as $elem )
+        {
+            // todo v2.0 - cria o array repo para uso de markup
+//            $resultSet[ "repo" ][] = $elem;
+
+            // item de exibição padrão
+            $resultSet[ "itens" ][] = [
+                'id'   => $elem->{$this->primaryKey},
+                'text' => $elem->{$select2Text},
+            ];
+        }
+
+        // proxima pagina bool
+        $resultSet[ "prox" ] = count( $search ) == $limitPage;
+
+        return $resultSet;
+    }
+}

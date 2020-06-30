@@ -1,0 +1,16 @@
+{
+    "name": "gsantana/select2easy-laravel",
+    "description": "Uso global e generico do plugin select2 ajax utilizando o laravel",
+    "authors": [
+        {
+            "name": "Guilherme Ferro",
+            "email": "g_santana26@yahoo.com.br"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Select2Easy\\": "src/"
+        }
+    }
+}

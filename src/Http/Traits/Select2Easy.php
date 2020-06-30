@@ -13,6 +13,15 @@ use Illuminate\Support\Collection;
 trait Select2Easy
 {
     // minimo de 6 para paginação pelo plugin select2
+    /**
+     * @param $query
+     * @param string $term
+     * @param int $page
+     * @param array $select2Search
+     * @param string $select2Text
+     * @param int $limitPage
+     * @return array
+     */
     public function scopeSelect2easy( $query, string $term, int $page, array $select2Search, string $select2Text, int $limitPage = 6 )
     {
         // varre os campos que podem ser pesquisados
@@ -30,6 +39,12 @@ trait Select2Easy
         return $this->resultSet( $search, $select2Text, $limitPage );
     }
 
+    /**
+     * @param Collection $search
+     * @param $select2Text
+     * @param $limitPage
+     * @return array
+     */
     private function resultSet( Collection $search, $select2Text, $limitPage )
     {
         // set array return

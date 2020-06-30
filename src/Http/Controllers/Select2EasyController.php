@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Crypt;
 
 class Select2EasyController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function __invoke( Request $request )
     {
         // encapsulamento
@@ -50,6 +54,12 @@ class Select2EasyController extends Controller
         return $this->sendSuccess( $model::$dataMethod( $term, $dados[ "page" ] ?? 1 ) );
     }
 
+    /**
+     * @param $error
+     * @param array $data
+     * @param int $code
+     * @return mixed
+     */
     private function sendError( $error, array $data = [], int $code = 404 )
     {
         $res = [
@@ -62,6 +72,11 @@ class Select2EasyController extends Controller
         return $this->send( $res, $code );
     }
 
+    /**
+     * @param $result
+     * @param string $message
+     * @return mixed
+     */
     private function sendSuccess( $result, $message = "" )
     {
         return $this->send([
@@ -71,6 +86,11 @@ class Select2EasyController extends Controller
         ] );
     }
 
+    /**
+     * @param array $res
+     * @param int $code
+     * @return mixed
+     */
     private function send( array $res, int $code = 200 )
     {
         return response()->json( $res, $code );

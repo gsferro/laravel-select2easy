@@ -13,11 +13,18 @@
  ----------
  */
 jQuery.fn.select2easy = function( param ) {
-	let select = $( this );
 
-	let hast   = select.data( 'sl2-hash' ) || '';
-	let model  = select.data( 'sl2-model' ) || '';
-	let method = select.data( 'sl2-method' ) || '';
+	// opcional enviar os dados
+	let dados =  $.extend( {
+		// sl2_hash  	: '\Illuminate\Support\Facades\Crypt::encryptString('Model')' ,
+		// sl2_model    : 'string Model' ,
+		// sl2_method 	: 'string Method' ,
+	} , _param );
+
+	let select = $( this );
+	let hast   = !!dados.sl2_hash ? dados.sl2_hash : (select.data( 'sl2_hash' ) || '');
+	let model  = !!dados.sl2_model ? dados.sl2_model : (select.data( 'sl2_model' ) || '');
+	let method = !!dados.sl2_method ? dados.sl2_method : (select.data( 'sl2_method' ) || '');
 
 	let urlDataParams = "hash=" + hast + "&model=" + model + "&method=" + method;
 
@@ -81,8 +88,7 @@ jQuery.fn.select2easy = function( param ) {
 		return repo.full_name || repo.text;
 	}*/
 
-	let myParam = param || {};
-	let options = $.extend( option , myParam );
+	let options = $.extend( option , dados );
 
 	select.select2( options );
 };

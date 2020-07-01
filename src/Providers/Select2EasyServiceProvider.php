@@ -3,6 +3,7 @@
 namespace Gsferro\Select2Easy\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class Select2EasyServiceProvider extends ServiceProvider
 {
@@ -29,5 +30,15 @@ class Select2EasyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../public' => public_path('vendor/select2easy'),
         ]);
+
+        // Alias blade
+        Blade::directive("select2easyCss", function(){
+            return "<link href='/vendor/select2easy/select2/css/select2.css' rel='stylesheet' type='text/css'/>";
+        });
+
+        Blade::directive("select2easyJs", function(){
+            return 	"<script src='/vendor/select2easy/js/select2easy.js'></script>".
+                    "<script src='/vendor/select2easy/select2/js/select2.js'></script>";
+        });
     }
 }

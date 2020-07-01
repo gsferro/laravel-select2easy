@@ -1,34 +1,34 @@
 # Laravel Select2easy
 
-Uso global e generico do plugin select2 ajax utilizando o laravel
+Uso global e generico, de uma forma easy, do plugin select2 ajax utilizando o laravel
 
-### pre-requisitos
-    - plugin Select2
+### Pre-requisitos
+    - plugin jquery
 
-### publush 
+### Config 
+- Publish 
     php artisan vendo:publish --provider="Gsferro\Select2Easy\Providers\Select2EasyServiceProvider"    
     
-### diretrivas blade    
+- Diretrivas blade    
     Coloque as no seu arquivo de layout
-     @select2easyCss()
-     @select2easyJs()
+    @select2easyCss()
+    @select2easyJs()
      
-     ou adicione os arquivos css e js de /vendor/select2easy/*
+    Ou adicione os arquivos css e js de /vendor/select2easy/*
     
 ### Uso    
-    * Implemente na model a trait ``select2Ajax``
-    * Crie uma stact function Sl2NomeMetodo que sera chamado implementação em ``data-sl2-method``
+    Implemente na model a trait Select2Easy
+    Crie uma stact function Sl2NomeMetodo que sera chamado implementação em data-sl2_method ou { sl2_method : ""}
     
-- view
-    * no select coloque a Classe selectAjax 
-    * required
-        * coloque o attributo data-sl2_method = "nomeDoMetodoEstaticoDaModel" 
-
-    * e 
-        * coloque o attributo data-sl2_model = 'caminho\para\Model' ou
-        * coloque o attributo data-sl2_hash = "{{ Crypt::encryptString('caminho\para\Model') }}"
+- View
+    no select coloque a class select2Easy 
+    required
+    * coloque o attributo data-sl2_method = "nomeDoMetodoEstaticoDaModel" 
+     
+    * coloque o attributo data-sl2_model = 'caminho\para\Model'
+    *  ou coloque o attributo data-sl2_hash = "{{ Crypt::encryptString('caminho\para\Model') }}"
     
-    * instancie o plugin no select
+- Instancie o plugin no select2easy
 >
 ``` javascript    
     <script type="text/javascript">
@@ -46,8 +46,8 @@ Uso global e generico do plugin select2 ajax utilizando o laravel
         } )
     </script>
 ```    
-- model        
-    * use a trait select2Ajax
+- Model        
+    * use a trait Select2Easy
     * crie o nomeDoMetodoEstaticoDaModel passando o term e page
     ex:
 >    

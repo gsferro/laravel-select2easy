@@ -12,7 +12,7 @@
  * @this input select
  ----------
  */
-jQuery.fn.select2easy = function( param ) {
+jQuery.fn.select2easy = function( _param ) {
 
 	// opcional enviar os dados
 	let dados =  $.extend( {
@@ -22,9 +22,9 @@ jQuery.fn.select2easy = function( param ) {
 	} , _param );
 
 	let select = $( this );
-	let hast   = !!dados.sl2_hash ? dados.sl2_hash : (select.data( 'sl2_hash' ) || '');
-	let model  = !!dados.sl2_model ? dados.sl2_model : (select.data( 'sl2_model' ) || '');
-	let method = !!dados.sl2_method ? dados.sl2_method : (select.data( 'sl2_method' ) || '');
+	let hast   = !!dados.sl2_hash   ? dados.sl2_hash 	: (select.data( 'sl2_hash' ) 	|| '');
+	let model  = !!dados.sl2_model  ? dados.sl2_model 	: (select.data( 'sl2_model' ) 	|| '');
+	let method = !!dados.sl2_method ? dados.sl2_method 	: (select.data( 'sl2_method' ) 	|| '');
 
 	let urlDataParams = "hash=" + hast + "&model=" + model + "&method=" + method;
 
@@ -35,7 +35,7 @@ jQuery.fn.select2easy = function( param ) {
 		theme              : "bootstrap" ,
 		width              : '100%' ,
 		ajax               : {
-			url            : "select2easy?" + urlDataParams ,
+			url            : "/select2easy?" + urlDataParams ,
 			dataType       : 'json' ,
 			delay          : 250 ,
 			cache          : true ,

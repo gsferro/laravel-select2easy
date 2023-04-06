@@ -1,5 +1,8 @@
 {
     "name": "gsferro/select2easy",
+    "type": "library",
+    "license": "MIT",
+    "keywords" : ["Laravel", "Eloquent", "Seach", "Easy", "select2", "select2easy", "Select2Easy", "plugin"],
     "description": "Uso global e generico do plugin select2 ajax utilizando o laravel",
     "authors": [
         {

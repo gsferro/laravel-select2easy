@@ -28,8 +28,9 @@ jQuery.fn.select2easy = function( _param ) {
 
 	let urlDataParams = "hash=" + hash + "&model=" + model + "&method=" + method;
 
+	let minimumInputLength = !!dados.minimuminputlength ? dados.minimuminputlength : (select.data( 'minimuminputlength' ) || false);
 	let option = {
-		minimumInputLength : 1 ,
+		minimumInputLength : typeof minimumInputLength === 'number' ? minimumInputLength : 0 ,
 		placeholder        : "Busque aqui..." ,
 		allowClear         : true ,
 		theme              : "bootstrap" ,

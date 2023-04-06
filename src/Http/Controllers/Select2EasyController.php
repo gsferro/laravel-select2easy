@@ -21,9 +21,9 @@ class Select2EasyController extends Controller
         # validações request
         // pegando o termo
         $term = $dados[ "term" ];
-        if (blank($term)) {
-            return $this->sendError("Pesquisa obrigatório!");
-        }
+//        if (blank($term)) {
+//            return $this->sendError("Pesquisa obrigatório!");
+//        }
 
         ################### verifica paramentros
         $model = false;

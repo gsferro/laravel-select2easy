@@ -9,7 +9,8 @@ composer require gsferro/select2easy -W
 ### Pacotes Dependências:
 Package | Versão
 --------|-----------
-jquery | 3.*
+jquery | ^3.*
+Select2 | ^4.0.13
 
 ### Publish
 ```composer 
@@ -106,3 +107,24 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
             }
         }
     ```
+
+### Selected
+
+- Links do plugin
+  - https://select2.org/data-sources/ajax#default-pre-selected-values
+  - https://select2.org/programmatic-control/add-select-clear-items
+
+- melhor opção:
+```html
+<select id="select2easy" name="select2easy" class="form-control select2easy"
+      data-sl2_method="sl2"
+      data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
+>
+    <option value="{{ $model->teams_id }}" selected>{{ \App\Models\Teams::find($model->teams_id)->name }}</option>
+    <!-- ou usar via relacionamento (se não for 1xN ou NxN -->
+    <option value="{{ $model->teams->id }}" selected>{{ $model->teams->name }}</option>
+</select>
+```
+
+### License
+Laravel Localization is an open-sourced laravel package licensed under the MIT license

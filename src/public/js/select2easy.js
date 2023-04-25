@@ -22,14 +22,15 @@ jQuery.fn.select2easy = function( _param ) {
 	} , _param );
 
 	let select = $( this );
-	let hast   = !!dados.sl2_hash   ? dados.sl2_hash 	: (select.data( 'sl2_hash' ) 	|| '');
+	let hash   = !!dados.sl2_hash   ? dados.sl2_hash 	: (select.data( 'sl2_hash' ) 	|| '');
 	let model  = !!dados.sl2_model  ? dados.sl2_model 	: (select.data( 'sl2_model' ) 	|| '');
 	let method = !!dados.sl2_method ? dados.sl2_method 	: (select.data( 'sl2_method' ) 	|| '');
 
-	let urlDataParams = "hash=" + hast + "&model=" + model + "&method=" + method;
+	let urlDataParams = "hash=" + hash + "&model=" + model + "&method=" + method;
 
+	let minimumInputLength = !!dados.minimuminputlength ? dados.minimuminputlength : (select.data( 'minimuminputlength' ) || false);
 	let option = {
-		minimumInputLength : 1 ,
+		minimumInputLength : typeof minimumInputLength === 'number' ? minimumInputLength : 0 ,
 		placeholder        : "Busque aqui..." ,
 		allowClear         : true ,
 		theme              : "bootstrap" ,

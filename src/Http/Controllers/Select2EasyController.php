@@ -21,9 +21,9 @@ class Select2EasyController extends Controller
         # validações request
         // pegando o termo
         $term = $dados[ "term" ];
-        if (blank($term)) {
-            return $this->sendError("Pesquisa obrigatório!");
-        }
+//        if (blank($term)) {
+//            return $this->sendError("Pesquisa obrigatório!");
+//        }
 
         ################### verifica paramentros
         $model = false;
@@ -53,8 +53,9 @@ class Select2EasyController extends Controller
         if (!class_exists($model)) {
             return $this->sendError("Hash/Model inválido!");
         }
-        // ve se não tem no array de class_uses o nome da Traits Select2Ajax
-        if (!preg_grep('/Select2Easy/', array_keys(class_uses($model)))) {
+
+        // ve se não tem no array de class_uses o nome da Traits Select2Easy
+        if (!method_exists((new $model), 'scopeSelect2easy')) {
             return $this->sendError("Select2 não autorizado!");
         }
 

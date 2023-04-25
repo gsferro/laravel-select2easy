@@ -16,21 +16,29 @@ jQuery.fn.select2easy = function( _param ) {
 
 	// opcional enviar os dados
 	let dados =  $.extend( {
-		// sl2_hash  	: '\Illuminate\Support\Facades\Crypt::encryptString('Model')' ,
-		// sl2_model    : 'string Model' ,
-		// sl2_method 	: 'string Method' ,
+		// sl2_hash  			: '\Illuminate\Support\Facades\Crypt::encryptString('Model')' ,
+		// sl2_model    		: 'string Model' ,
+		// sl2_method 			: 'string Method' ,
+		// sl2_method 			: 'string Method' ,
+		// minimuminputlength 	: 'int select2' ,
+		// delay 				: 'int ajax' ,
 	} , _param );
 
 	let select = $( this );
+	// model
 	let hash   = !!dados.sl2_hash   ? dados.sl2_hash 	: (select.data( 'sl2_hash' ) 	|| '');
 	let model  = !!dados.sl2_model  ? dados.sl2_model 	: (select.data( 'sl2_model' ) 	|| '');
 	let method = !!dados.sl2_method ? dados.sl2_method 	: (select.data( 'sl2_method' ) 	|| '');
+	// select2
+	let minLenght = !!dados.minimuminputlength ? dados.minimuminputlength : (select.data( 'minimuminputlength' ) || false);
+	// ajax
+	let delay = !!dados.delay ? dados.delay : (select.data( 'delay' ) || 500);
 
+	// encapsulamento
 	let urlDataParams = "hash=" + hash + "&model=" + model + "&method=" + method;
 
-	let minimumInputLength = !!dados.minimuminputlength ? dados.minimuminputlength : (select.data( 'minimuminputlength' ) || false);
 	let option = {
-		minimumInputLength : typeof minimumInputLength === 'number' ? minimumInputLength : 0 ,
+		minimumInputLength : typeof minLenght === 'number' ? minLenght : 0 ,
 		placeholder        : "Busque aqui..." ,
 		allowClear         : true ,
 		theme              : "bootstrap" ,
@@ -38,7 +46,7 @@ jQuery.fn.select2easy = function( _param ) {
 		ajax               : {
 			url            : "/select2easy?" + urlDataParams ,
 			dataType       : 'json' ,
-			delay          : 250 ,
+			delay          : delay ?? 500 ,
 			cache          : true ,
 			data           : ( params ) => {
 				return {

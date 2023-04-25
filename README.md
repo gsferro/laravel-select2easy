@@ -59,30 +59,49 @@ Ex: Model User.
     * Coloque  a trait ```Select2Easy```
     * crie o nomeDoMetodoEstaticoDaModel passando o term e page
     ex:
->    
-``` php
 
-<?php
-    use Gsferro\Select2Easy\Http\Traits\Select2Easy
+    ``` php
+    <?php
+        use Gsferro\Select2Easy\Http\Traits\Select2Easy
+        
+        #model
+        
+        use Select2Easy;
+  
+        public static function sl2Name( $term, $page ) // nome usado na view
+        {
+            /*
+            |---------------------------------------------------
+            | Required
+            |---------------------------------------------------
+            |
+            | $select2Search - colum from search
+            | $select2Text - colum from write selectbox
+            |
+            */
+            $select2Search = [
+                "name",
+                // with relation
+                'relation.title'
+            ];
     
-    #model
-    
-    use Select2Easy;
-    public static function sl2Name( $term, $page ) // nome usado na view
-    {
-        // required
-        $select2Search = [
-            "name",
-        ];
-
-        // required
-        $select2Text = "name";
-
-        // opc
-        $limitPage = 10; // default 6
-        // opc
-        $extraScopes = ["active"] // scope previously declared 
-
-        return self::select2easy( $term, $page, $select2Search, $select2Text, $limitPage, $extraScopes );
-    }
-```    
+            // required
+            $select2Text = "name";
+            
+            /*
+            |---------------------------------------------------
+            | Optional exemple
+            |---------------------------------------------------
+            |
+            | $limitPage - limit view selectbox, default 6
+            | $extraScopes - array with scopes
+            | $prefix - prefix for before $select2Text
+            |
+            */
+            $limitPage   = 10; // default 6
+            $extraScopes = ["active"] // scope previously declared 
+            $prefix      = 'otherRelation.description';
+            
+            return self::select2easy($term, $page, $select2Search, $select2Text, $limitPage, $extraScopes, $prefix);
+        }
+    ```    

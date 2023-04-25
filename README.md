@@ -51,6 +51,9 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
         data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
         <!-- ou -->
         data-sl2_model="App\Models\Teams"
+  
+        data-minimumInputLength=2
+        data-delay=1000
     >
     </select>
     ```
@@ -63,6 +66,9 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
             $( '#select2easy' ).select2easy( {
                 // select2
                 // minimumInputLength : 2 ,
+    
+                // ajax
+                // delay : 1000 ,
     
                 // select2eay server side
                 // sl2_method : 'string Method' ,
@@ -142,6 +148,8 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
     <option value="{{ $model->teams_id }}" selected>{{ \App\Models\Teams::find($model->teams_id)->name }}</option>
     <!-- ou usar via relacionamento (se não for 1xN ou NxN -->
     <option value="{{ $model->teams->id }}" selected>{{ $model->teams->name }}</option>
+    <!-- prefix -->
+    <option value="{{ $model->teams->id }}" selected>{{ $model->teams->id }} - {{ $model->teams->name }}</option>
 </select>
 ```
 

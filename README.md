@@ -19,12 +19,22 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
 
 ### Config
 - Diretrivas blade, Coloque as no seu arquivo de layout    
-    
-``` text
-    @select2easyCss()
-    @select2easyJs()
-``` 
-    
+  ``` php
+  @select2easyCss()
+  @select2easyJs()
+  ```
+
+- Caso utilize framework bootstrap 5:
+  ``` php
+  @Select2easyThemeBootstrap5()
+  ```
+  - Mude ou na instancia do plugin ou diretamente no `public/vendor/select2easy/js/select2easy.js`:
+     ``` javascript
+        $('#exemple').select2easy({
+         theme: 'bootstrap-5',
+       });
+    ```
+  
 ### Uso
 
 - Você pode implementar quantos metodos quiser, para chamar a modelo em varias ocaciões dentro do projeto

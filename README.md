@@ -1,9 +1,9 @@
 <p align="center">
     <img src="logo.png" alt="select2easy">
     <p align="center">
-        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="Latest Version" src="https://img.shields.io/packagist/v/gsferro/filtereasy"></a>
-        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/gsferro/filtereasy"></a>
-        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="License" src="https://img.shields.io/packagist/l/gsferro/filtereasy"></a>
+        <a href="https://packagist.org/packages/gsferro/select2easy"><img alt="Latest Version" src="https://img.shields.io/packagist/v/gsferro/select2easy"></a>
+        <a href="https://packagist.org/packages/gsferro/select2easy"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/gsferro/select2easy"></a>
+        <a href="https://packagist.org/packages/gsferro/select2easy"><img alt="License" src="https://img.shields.io/packagist/l/gsferro/select2easy"></a>
     </p>
 </p>
 

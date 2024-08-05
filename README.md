@@ -1,8 +1,16 @@
-![Logo](logo.png)
+<p align="center">
+    <img src="logo.png" alt="select2easy">
+    <p align="center">
+        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="Latest Version" src="https://img.shields.io/packagist/v/gsferro/filtereasy"></a>
+        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/gsferro/filtereasy"></a>
+        <a href="https://packagist.org/packages/gsferro/filtereasy"><img alt="License" src="https://img.shields.io/packagist/l/gsferro/filtereasy"></a>
+    </p>
+</p>
 
+------
 ### Instalação:
 
-```composer 
+```shell 
 composer require gsferro/select2easy -W
 ```
 
@@ -33,6 +41,19 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
         $('#exemple').select2easy({
          theme: 'bootstrap-5',
        });
+    ```
+  - É necesário fazer um ajuste no css para quando o select2 estiver `disabled`
+    ```css
+    /* select2 disabled */
+    .select2-container--bootstrap-5.select2-container--disabled .select2-selection,
+    .select2-container--bootstrap-5.select2-container--disabled .select2-selection__placeholder,
+    .select2-container--bootstrap-5.select2-container--disabled .select2-selection__rendered,
+    .select2-container--bootstrap-5.select2-container--disabled.select2-container--focus .select2-selection
+    {
+        /* coloque a var conforme seu template ou set  #232e3c para thema dark e #edf2f9 para thema light*/ 
+        background-color: var(--falcon-gray-200) !important; 
+        opacity: 1;
+    }
     ```
   
 ### Uso
@@ -104,7 +125,7 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
         {
             use Select2Easy;
       
-            public static function sl2Name( $term, $page ) // nome usado na view
+            public static function sl2Name(string $term, int $page, string $parentId = null ) // nome usado na view
             {
                 /*
                 |---------------------------------------------------
@@ -132,16 +153,92 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
                 | $limitPage - limit view selectbox, default 6
                 | $extraScopes - array with scopes
                 | $prefix - prefix for before $select2Text
+                | $scopeParentAndId - array with scope parent and id
                 |
                 */
                 $limitPage   = 10; // default 6
                 $extraScopes = ["active"] // scope previously declared 
                 $prefix      = 'otherRelation.description';
+                $scopeParentAndId = [
+                  'scope' => $parentId,
+                ];
                 
-                return self::select2easy($term, $page, $select2Search, $select2Text, $limitPage, $extraScopes, $prefix);
+               return self::select2easy(
+                  $term,
+                  $page,
+                  $select2Search,
+                  $select2Text,
+                  $limitPage = 6,
+                  $extraScopes = [],
+                  $prefix = null,
+                  $scopeParentAndId
+              );
             }
         }
     ```    
+
+### Cascade (select2 parents/dependent)
+
+Tem momentos que é necessário que um select seja dependente de outro para poder exibir os dados pré filtrados, por 
+exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` no select2 `pai` (*parent*) o 
+`id` do select2 do`filho` (*child*):
+  - Exemplo:////////////////////////////////////////////////////////////////
+    ```html
+    <select id="parent"
+        ...
+        data-sl2_child="#children" 
+    >
+    </select>
+    ```
+  - Na model: É necessário ter o scope do `pai` e ser inicializado o array `$scopeParentAndId` contendo como chave o 
+    scope e o value o paramentro `$parentId`, e passar para o  `self::select2easy`, exemplo:
+     ```php
+    public static function sl2Name(string $term, int $page, string $parentId)
+    {
+        $select2Search = [
+        "name",
+        ];
+        $select2Text = "name";
+        $scopeParentAndId = [
+            'parent' => $parentId,
+        ];
+
+        return self::select2easy(
+            $term,
+            $page,
+            $select2Search,
+            $select2Text,
+            $limitPage = 6,
+            $extraScopes = [],
+            $prefix = null,
+            $scopeParentAndId
+        );
+    }
+    ```
+
+    - Caso vc esteja usando as versões do `php` >8, pode utilizar o `Named Arguments`:
+     ```php
+    public static function sl2Name(string $term, int $page, string $parentId)
+    {
+        $select2Search = [
+        "name",
+        ];
+        $select2Text = "name";
+        $scopeParentAndId = [
+            'parent' => $parentId,
+        ];
+
+        return self::select2easy(
+            term: $term,
+            page: $page,
+            select2Search: $select2Search,
+            select2Text: $select2Text,
+            scopeParentAndId: $scopeParentAndId
+        );
+    }
+    ```
+  
+    - Inspirado neste javascript [select2-cascade.js](https://gist.github.com/ajaxray/187e7c9a00666a7ffff52a8a69b8bf31) 
 
 ### Selected
 
@@ -162,6 +259,126 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
     <option value="{{ $model->teams->id }}" selected>{{ $model->teams->id }} - {{ $model->teams->name }}</option>
 </select>
 ```
+
+### Para versões do Laravel > 7
+
+Como a ideia, pelo menos nas versões `v1.*` do pacote, é manter a compatiblidade com todas as versões do `Laravel`, 
+desde a `L5` até a atual `L11`, não esta disponivel um *component*, mas fica aqui uma sugestão e possivel 
+disponibilzação para as proximas versões de um *component* completamente funcional (baseado no `bootstrap 5`):
+
+- Crie, caso não exista: `resources/views/components/forms/label.blade.php`
+    ```php
+        @props([
+            'label',
+            'isRequired' => false,
+        ])
+        <label  {{ $attributes->merge([ 'class' => 'form-label' ])->whereDoesntStartWith('label') }}>
+            {{ $label }} {{ $isRequired ? '*' : '' }}
+        </label>
+    ```
+
+  - Crie: `resources/views/components/select2/easy.blade.php`
+      ```php
+      @props([
+          'name',
+          'groupClass',
+          'appModel',
+          'col' => 12,
+          'colMd' => 4,
+          'id'    => null,
+          'sl2'    => 'sl2Name',
+          'label' => null,
+      ])
+    
+      @section('vendor-styles')
+          @once
+              @select2easyCss()
+              <link href="{{ asset('vendor/select2easy/select2/css/select2-bootstrap.css') }}" rel='stylesheet'
+                    type='text/css'>
+          @endonce
+      @endsection
+    
+      @php
+          $id = $id ?? $name;
+      @endphp
+    
+      <div class="col-{{ $col }} col-md-{{ $colMd }} {{ $groupClass ?? '' }}">
+          @if($label)
+              <x-forms.label
+                      for="{{ $id }}"
+                      class="{{ $labelClass ?? '' }}"
+                      :label="$label"
+                      :isRequired="$attributes->offsetExists('required')"
+              />
+          @endif
+          <select
+                  name="{{ $name }}"
+                  id="{{ $id }}"
+                  data-sl2_method="{{ $sl2 }}"
+                  data-sl2_hash="{{ Crypt::encryptString($appModel) }}"
+                  {{ $attributes
+                      ->merge(['class' => 'form-control select2easy'])
+                      ->whereDoesntStartWith('col')
+                  }}
+        >
+              {{ $slot }}
+          </select>
+      </div>
+    
+      @push('js')
+          <script type="text/javascript">
+              $(() => {
+                  $('#{{$id}}').select2easy({
+                      theme: 'bootstrap-5',
+                  });
+              });
+          </script>
+      @endpush
+      ```
+- Recomendo criar novos components encapsulando-do, Exemplo de uso:
+     - `resources/views/components/select2/category.blade.php`
+    ```php
+    @props([
+        'col',
+        'sl2' => null,
+        'value' => null,
+        'name' => null,
+        'useRequest' => null,
+    ])
+    
+    @php
+        $name = $name ?? 'category_id';
+        $value = isset($useRequest)
+            ? app('request')->input($name)
+            : $value;
+    
+        $appModel = '\App\Models\Category';
+    @endphp
+    
+    <x-select2.easy
+        :col="$col ?? '12'"
+        :col-md="$colMd ?? '4'"
+        label="Categoria"
+        :name="$name"
+        :sl2="$sl2"
+        :app-model="$appModel"
+        {{ $attributes }}
+    >
+        @if (!empty($value))
+            <option value="{{ $value }}">
+                {{ $appModel::find($value)->name }}
+            </option>
+        @endif
+    </x-select2.easy>
+    ```
+  - No formulário:
+    ```php
+    # usando request para pegar o value (filtro e etc)
+    <x-select2.category useRequest data-sl2_child="#subcategory_id"/>
+    # no form de create/edit
+    <x-select2.category :value="old('category_id', $model->category_id)"  data-sl2_child="#subcategory_id" required />
+    ```
+
 
 ### License
 Laravel Localization is an open-sourced laravel package licensed under the MIT license

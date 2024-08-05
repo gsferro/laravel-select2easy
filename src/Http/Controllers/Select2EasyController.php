@@ -14,19 +14,21 @@ class Select2EasyController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // encapsulamento
+        /*
+        |---------------------------------------------------
+        | Encapsulamento
+        |---------------------------------------------------
+        */
         $dados = array_map('trim', $request->all());
 
-        #################
-        # validações request
-        // pegando o termo
-        $term = $dados[ "term" ];
-//        if (blank($term)) {
-//            return $this->sendError("Pesquisa obrigatório!");
-//        }
-
-        ################### verifica paramentros
+        /*
+        |---------------------------------------------------
+        | Verifica Paramentros
+        |---------------------------------------------------
+        */
         $model = false;
+        $term = $dados["term"];
+        $page = $dados["page"] ?? 1;
 
         # Obrigação de enviar a model
         // encrypt
@@ -48,7 +50,6 @@ class Select2EasyController extends Controller
             return $this->sendError("Hash obrigatório!");
         }
 
-        # validações model
         // se a classe existe
         if (!class_exists($model)) {
             return $this->sendError("Hash/Model inválido!");
@@ -62,15 +63,24 @@ class Select2EasyController extends Controller
         // para o metodo da model
         $dataMethod = $dados[ "method" ];
         if (blank($dataMethod)) {
-            return $this->sendError("metodo obrigatório!");
+            return $this->sendError("Metodo obrigatório!");
         }
+
         if (!method_exists($model, $dataMethod)) {
             return $this->sendError("Metodo inválido!");
         }
-        #################
 
-        # run
-        return $this->sendSuccess($model::$dataMethod($term, $dados[ "page" ] ?? 1));
+        /*
+        |---------------------------------------------------
+        | Cascade
+        |---------------------------------------------------
+        */
+        if (isset($dados['parent_id']) && !blank($dados['parent_id'])) {
+            return $this->sendSuccess($model::$dataMethod($term, $page, $dados['parent_id'] ));
+        }
+
+        // method default
+        return $this->sendSuccess($model::$dataMethod($term, $page));
     }
 
     /**

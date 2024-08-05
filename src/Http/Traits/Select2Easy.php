@@ -7,15 +7,19 @@ use Illuminate\Support\Collection;
 trait Select2Easy
 {
     /**
-     * @param $query
-     * @param string $term
-     * @param int $page
-     * @param array $select2Search
-     * @param string $select2Text
-     * @param int $limitPage     minimo de 6 para paginação pelo plugin select2
-     * @param array $extraScopes nome do scope
-     * @param string|null $prefix
-     * @return array
+     * Executes a select2easy search on the given query with the provided parameters.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query  The query to search on.
+     * @param  string  $term  The search term to look for.
+     * @param  int  $page  The page number of the results to fetch.
+     * @param  array  $select2Search  An array of fields to search on.
+     * @param  string  $select2Text  The field to display as the text in the select2 dropdown.
+     * @param  int  $limitPage  The maximum number of results to fetch per page. Default is 6.
+     * @param  array  $extraScopes  An array of extra scopes to apply to the query. Default is an empty array.
+     * @param  string|null  $prefix  A prefix to add to the result IDs. Default is null.
+     * @param  array  $scopeParentAndId  An array of parent scopes and their IDs to apply to the query. Default is an
+     *     empty array.
+     * @return mixed The result set of the select2easy search.
      */
     public function scopeSelect2easy(
         $query,
@@ -25,7 +29,8 @@ trait Select2Easy
         string $select2Text,
         int $limitPage = 6,
         array $extraScopes = [],
-        string $prefix = null
+        string $prefix = null,
+        array $scopeParentAndId = [],
     ) {
         // varre os campos que podem ser pesquisados
         foreach ($select2Search as $field) {
@@ -51,6 +56,13 @@ trait Select2Easy
             }
         }
 
+        // add scope parent with id na query
+        if (!empty($scopeParentAndId)) {
+            foreach ($scopeParentAndId as $scope => $id) {
+                $query = $query->$scope($id);
+            }
+        }
+
         // seta a posição
         $offset = ($page - 1) * $limitPage;
 
@@ -62,11 +74,13 @@ trait Select2Easy
     }
 
     /**
-     * @param Collection $search
-     * @param string $select2Text
-     * @param int $limitPage
-     * @param string|null $prefix
-     * @return array
+     * Generates a result set for the select2Easy function.
+     *
+     * @param  Collection  $search  The collection of items to search.
+     * @param  string  $select2Text  The field to use for the text display.
+     * @param  int  $limitPage  The maximum number of items per page.
+     * @param  string|null  $prefix  The prefix to add to the text display.
+     * @return array The result set containing the items and the next page flag.
      */
     protected function select2EasyResultSet(
         Collection $search,
@@ -75,7 +89,7 @@ trait Select2Easy
         string $prefix = null
     ) {
         // set array return
-        $resultSet  = [];
+        $resultSet = [];
         $textPrefix = '';
 
         // pega os itens
@@ -95,18 +109,18 @@ trait Select2Easy
             // with prefix
             if (!is_null($prefix) && strpos($prefix, '.')) {
                 list($relPrefix, $fieldPrefix) = explode('.', $prefix);
-                $text = $elem->$relPrefix->$fieldPrefix . ' - ' . $text;
+                $text = $elem->$relPrefix->$fieldPrefix.' - '.$text;
             }
 
             // item de exibição padrão
-            $resultSet[ "itens" ][] = [
-                'id'   => $elem->{$this->primaryKey},
+            $resultSet["itens"][] = [
+                'id' => $elem->{$this->primaryKey},
                 'text' => $text,
             ];
         }
 
         // proxima pagina bool
-        $resultSet[ "prox" ] = count($search) == $limitPage;
+        $resultSet["prox"] = count($search) == $limitPage;
 
         return $resultSet;
     }

@@ -34,7 +34,7 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
 
 - Caso utilize framework bootstrap 5:
   ``` php
-  @Select2easyThemeBootstrap5()
+  @select2easyThemeBootstrap5()
   ```
   - Mude ou na instancia do plugin ou diretamente no `public/vendor/select2easy/js/select2easy.js`:
      ``` javascript

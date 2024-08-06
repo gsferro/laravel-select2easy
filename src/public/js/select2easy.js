@@ -48,7 +48,6 @@ jQuery.fn.select2easy = function( _param )
 	// pode ser tanto init, com um valor de busca default quanto ser passado por paramentro
 	// qdo ha um pai, qto  valor que sera enviado no evento change e passado para o filho
 	let parentId = !!dados.sl2_parent_id ? dados.sl2_parent_id : (select.data( 'sl2_parent_id' ) || '');
-	console.log(parentId);
 	if (parentId.length > 0) {
 		urlDataParams += "&parent_id=" + parentId;
 	}

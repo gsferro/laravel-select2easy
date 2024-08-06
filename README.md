@@ -42,7 +42,7 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
          theme: 'bootstrap-5',
        });
     ```
-  - É necesário fazer um ajuste no css para quando o select2 estiver `disabled`
+  - É necesário fazer um ajuste no css para quando o select2 estiver `disabled` e no tamanho do `input`
     ```css
     /* select2 disabled */
     .select2-container--bootstrap-5.select2-container--disabled .select2-selection,
@@ -53,6 +53,12 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
         /* coloque a var conforme seu template ou set  #232e3c para thema dark e #edf2f9 para thema light*/ 
         background-color: var(--falcon-gray-200) !important; 
         opacity: 1;
+    }
+    
+    /* fix padding input equal to select2 */
+    input.form-control {
+        min-height: calc(1.5em + 0.75rem + calc(var(--falcon-border-width)* 2));
+        padding: 0.375rem 1.25rem;
     }
     ```
   

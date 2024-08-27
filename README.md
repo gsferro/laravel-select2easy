@@ -117,71 +117,73 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
         } )
     </script>
     ```    
-- Model        
-    * import usando: ```use Gsferro\Select2Easy\Http\Traits\Select2Easy```
-    * Coloque  a trait ```Select2Easy```
-    * crie o `nomeDoMetodoEstaticoDaModel` passando o term e page
-    - Exemplo:
+  - Model        
+      * import usando: ```use Gsferro\Select2Easy\Http\Traits\Select2Easy```
+      * Coloque  a trait ```Select2Easy```
+      * crie o `nomeDoMetodoEstaticoDaModel` passando o term e page
+      - Exemplo:
 
-    ``` php
-    <?php
-        use Gsferro\Select2Easy\Http\Traits\Select2Easy
+      ``` php
+      <?php
+          use Gsferro\Select2Easy\Http\Traits\Select2Easy
         
-        class Teams extends Model
-        {
-            use Select2Easy;
+          class Teams extends Model
+          {
+              use Select2Easy;
       
-            public static function sl2Name(string $term, int $page, string $parentId = null ) // nome usado na view
-            {
-                /*
-                |---------------------------------------------------
-                | Required
-                |---------------------------------------------------
-                |
-                | $select2Search - colum from search
-                | $select2Text - colum from write selectbox
-                |
-                */
-                $select2Search = [
-                    "name",
-                    // with relation
-                    'relation.title'
-                ];
+              public static function sl2Name(string $term, int $page, string $parentId = null ) // nome usado na view
+              {
+                  /*
+                  |---------------------------------------------------
+                  | Required
+                  |---------------------------------------------------
+                  |
+                  | $select2Search - colum from search
+                  | $select2Text - colum from write selectbox
+                  |
+                  */
+                  $select2Search = [
+                      "name",
+                      // with relation
+                      'relation.title'
+                  ];
         
-                // required
-                $select2Text = "name";
+                  // required
+                  $select2Text = "name";
                 
-                /*
-                |---------------------------------------------------
-                | Optional exemple
-                |---------------------------------------------------
-                |
-                | $limitPage - limit view selectbox, default 6
-                | $extraScopes - array with scopes
-                | $prefix - prefix for before $select2Text
-                | $scopeParentAndId - array with scope parent and id
-                |
-                */
-                $limitPage   = 10; // default 6
-                $extraScopes = ["active"] // scope previously declared 
-                $prefix      = 'otherRelation.description';
-                $scopeParentAndId = [
-                  'scope' => $parentId,
-                ];
+                  /*
+                  |---------------------------------------------------
+                  | Optional exemple
+                  |---------------------------------------------------
+                  |
+                  | $limitPage - limit view selectbox, default 6
+                  | $extraScopes - array with scopes
+                  | $prefix - prefix for after $select2Text
+                  | $scopeParentAndId - array with scope parent and id
+                  |
+                  */
+                  $limitPage   = 10; // default 6
+                  $extraScopes = ["active"] // scope previously declared 
+                  $prefix      = 'otherRelation.description'; //  or other column
+                  $scopeParentAndId = [
+                    'scope' => $parentId,
+                  ];
+                  $suffix = 'otherRelation.description'; //  or other column
                 
-               return self::select2easy(
-                  $term,
-                  $page,
-                  $select2Search,
-                  $select2Text,
-                  $limitPage = 6,
-                  $extraScopes = [],
-                  $prefix = null,
-                  $scopeParentAndId
-              );
-            }
-        }
-    ```    
+                 return self::select2easy(
+                    $term,
+                    $page,
+                    $select2Search,
+                    $select2Text,
+                    $limitPage = 6,
+                    $extraScopes = [],
+                    $prefix = null,
+                    $scopeParentAndId,
+                    $suffix = null,
+                );
+              }
+          }
+      ```    
 
 ### Cascade (select2 parents/dependent)
 
@@ -217,7 +219,8 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
             $limitPage = 6,
             $extraScopes = [],
             $prefix = null,
-            $scopeParentAndId
+            $scopeParentAndId,
+            $suffix = null,
         );
     }
     ```
@@ -245,6 +248,11 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
     ```
   
     - Inspirado neste javascript [select2-cascade.js](https://gist.github.com/ajaxray/187e7c9a00666a7ffff52a8a69b8bf31) 
+
+### Prefixos e Sufixos  (pode ser um relacionamento ou coluna)
+
+- Prefixo: adicionado antes do texto do select2
+- Sufixo: adicionado depois do texto do select2
 
 ### Selected
 

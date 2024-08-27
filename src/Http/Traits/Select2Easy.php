@@ -19,6 +19,7 @@ trait Select2Easy
      * @param  string|null  $prefix  A prefix to add to the result IDs. Default is null.
      * @param  array  $scopeParentAndId  An array of parent scopes and their IDs to apply to the query. Default is an
      *     empty array.
+     * @param  string|null  $suffix  A suffix to add to the result IDs. Default is null.
      * @return mixed The result set of the select2easy search.
      */
     public function scopeSelect2easy(
@@ -31,6 +32,7 @@ trait Select2Easy
         array $extraScopes = [],
         string $prefix = null,
         array $scopeParentAndId = [],
+        string $suffix = null
     ) {
         // varre os campos que podem ser pesquisados
         foreach ($select2Search as $field) {
@@ -70,7 +72,7 @@ trait Select2Easy
         $search = $query->skip($offset)->take($limitPage)->get();
 
         // envia pro processamento e devolve pro plugin
-        return $this->select2EasyResultSet($search, $select2Text, $limitPage, $prefix);
+        return $this->select2EasyResultSet($search, $select2Text, $limitPage, $prefix, $suffix);
     }
 
     /**
@@ -80,13 +82,15 @@ trait Select2Easy
      * @param  string  $select2Text  The field to use for the text display.
      * @param  int  $limitPage  The maximum number of items per page.
      * @param  string|null  $prefix  The prefix to add to the text display.
+     * @param  string|null  $suffix  The suffix to add to the text display.
      * @return array The result set containing the items and the next page flag.
      */
     protected function select2EasyResultSet(
         Collection $search,
         string $select2Text,
         int $limitPage,
-        string $prefix = null
+        string $prefix = null,
+        string $suffix = null
     ) {
         // set array return
         $resultSet = [];
@@ -107,9 +111,17 @@ trait Select2Easy
             }
 
             // with prefix
-            if (!is_null($prefix) && strpos($prefix, '.')) {
-                list($relPrefix, $fieldPrefix) = explode('.', $prefix);
-                $text = $elem->$relPrefix->$fieldPrefix.' - '.$text;
+            if (!is_null($prefix)) {
+                $prefixParts = explode('.', $prefix, 2);
+                $prefixValue = count($prefixParts) == 1 ? $elem->$prefix : $elem->{$prefixParts[0]}->{$prefixParts[1]};
+                $text = $prefixValue.' - '.$text;
+            }
+
+            // with sufix
+            if (!is_null($suffix)) {
+                $sufixParts = explode('.', $suffix, 2);
+                $suffixValue = count($sufixParts) == 1 ? $elem->$suffix : $elem->{$sufixParts[0]}->{$sufixParts[1]};
+                $text = $text.' - '.$suffixValue;
             }
 
             // item de exibição padrão

@@ -42,38 +42,29 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
          theme: 'bootstrap-5',
        });
     ```
-  - É necesário fazer um ajuste no css para quando o select2 estiver `disabled` e no tamanho do `input`
-    ```css
-    /* select2 disabled */
-    .select2-container--bootstrap-5.select2-container--disabled .select2-selection,
-    .select2-container--bootstrap-5.select2-container--disabled .select2-selection__placeholder,
-    .select2-container--bootstrap-5.select2-container--disabled .select2-selection__rendered,
-    .select2-container--bootstrap-5.select2-container--disabled.select2-container--focus .select2-selection
-    {
-        /* coloque a var conforme seu template ou set  #232e3c para thema dark e #edf2f9 para thema light*/ 
-        background-color: var(--falcon-gray-200) !important; 
-        opacity: 1;
-    }
+    - Ou vc pode utilizar o `@select2easyOptionsJs()` para configurar o plugin para usar o `theme` e também já deixara 
+      utilizando via `modal` ou outro `parent`
     
-    /* fix padding input equal to select2 */
-    input.form-control {
-        min-height: calc(1.5em + 0.75rem + calc(var(--falcon-border-width)* 2));
-        padding: 0.375rem 1.25rem;
-    }
+  - É necesário fazer um ajuste no css para quando o select2 estiver `disabled` e no tamanho do `input`
+    ``` php
+    @select2easyThemeBootstrap5Disabled()
     ```
+  - Caso queira implementar um css avançado no `theme`, adicione:  
+    ``` php
+    @select2easyThemeBootstrap5Advance()
+    ```
+- Caso você queira aplicar a instância do plugin `select2` em todas as tags `select`, adicione: `@select2easyApplyAnyJs()`
   
 ### Uso
 
 - Você pode implementar quantos metodos quiser, para chamar a modelo em varias ocaciões dentro do projeto
-    Ex: Model User.
-    
+    - Ex: Model User
     - `sl2Nome`: usando o nome como busca
     - `sl2Email`: usando o nome como busca
     - `sl2Login`: usando o nome como login
 
 - Implemente na model a trait Select2Easy
 - Crie uma stact function `Sl2<NomeMetodo>` que sera chamado na implementação em `data-sl2_method` ou `{ sl2_method : ""}`
-    
 
 - Na View:
     - no select coloque a class select2Easy (required)
@@ -81,22 +72,21 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
     * coloque o attributo data-sl2_model = 'caminho\para\Model'
     *  ou coloque o attributo data-sl2_hash = "{{ Crypt::encryptString('caminho\para\Model') }}"
     - Exemplo:
-    ```html
-    <label for="select2easy">Select2 Easy:</label>
-    <select id="select2easy" name="select2easy" class="form-control select2easy"
-        data-sl2_method="sl2"
-        data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
-        <!-- ou -->
-        data-sl2_model="App\Models\Teams"
-  
-        data-minimumInputLength=2
-        data-delay=1000
-    >
-    </select>
-    ```
-    
-- Instancie o plugin no select2easy
+      ```html
+      <label for="select2easy">Select2 Easy:</label>
+      <select id="select2easy" name="select2easy" class="form-control select2easy"
+          data-sl2_method="sl2"
+          data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
+          <!-- ou -->
+          data-sl2_model="App\Models\Teams"
 
+          data-minimumInputLength=2
+          data-delay=1000
+      >
+      </select>
+      ```
+
+- Instancie o plugin no select2easy
     ``` javascript    
     <script type="text/javascript">
         $( function() {
@@ -116,81 +106,80 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
             } );
         } )
     </script>
-    ```    
-  - Model        
-      * import usando: ```use Gsferro\Select2Easy\Http\Traits\Select2Easy```
-      * Coloque  a trait ```Select2Easy```
-      * crie o `nomeDoMetodoEstaticoDaModel` passando o term e page
-      - Exemplo:
-
+    ```
+- Model
+    * Import usando: ```use Gsferro\Select2Easy\Http\Traits\Select2Easy```
+    * Coloque  a trait ```Select2Easy```
+    * crie o `nomeDoMetodoEstaticoDaModel` passando o term e page
+    - Exemplo:
       ``` php
       <?php
-          use Gsferro\Select2Easy\Http\Traits\Select2Easy
-        
-          class Teams extends Model
+        use Gsferro\Select2Easy\Http\Traits\Select2Easy
+
+        class Teams extends Model
+        {
+          use Select2Easy;
+
+          public static function sl2Name(string $term, int $page, string $parentId = null ) // nome usado na view
           {
-              use Select2Easy;
-      
-              public static function sl2Name(string $term, int $page, string $parentId = null ) // nome usado na view
-              {
-                  /*
-                  |---------------------------------------------------
-                  | Required
-                  |---------------------------------------------------
-                  |
-                  | $select2Search - colum from search
-                  | $select2Text - colum from write selectbox
-                  |
-                  */
-                  $select2Search = [
-                      "name",
-                      // with relation
-                      'relation.title'
-                  ];
-        
-                  // required
-                  $select2Text = "name";
-                
-                  /*
-                  |---------------------------------------------------
-                  | Optional exemple
-                  |---------------------------------------------------
-                  |
-                  | $limitPage - limit view selectbox, default 6
-                  | $extraScopes - array with scopes
-                  | $prefix - prefix for after $select2Text
-                  | $scopeParentAndId - array with scope parent and id
-                  |
-                  */
-                  $limitPage   = 10; // default 6
-                  $extraScopes = ["active"] // scope previously declared 
-                  $prefix      = 'otherRelation.description'; //  or other column
-                  $scopeParentAndId = [
-                    'scope' => $parentId,
-                  ];
-                  $suffix = 'otherRelation.description'; //  or other column
-                
-                 return self::select2easy(
-                    $term,
-                    $page,
-                    $select2Search,
-                    $select2Text,
-                    $limitPage = 6,
-                    $extraScopes = [],
-                    $prefix = null,
-                    $scopeParentAndId,
-                    $suffix = null,
-                );
-              }
+              /*
+              |---------------------------------------------------
+              | Required
+              |---------------------------------------------------
+              |
+              | $select2Search - colum from search
+              | $select2Text - colum from write selectbox
+              |
+              */
+              $select2Search = [
+                  "name",
+                  // with relation
+                  'relation.title'
+              ];
+
+              // required
+              $select2Text = "name";
+
+              /*
+              |---------------------------------------------------
+              | Optional exemple
+              |---------------------------------------------------
+              |
+              | $limitPage - limit view selectbox, default 6
+              | $extraScopes - array with scopes
+              | $prefix - prefix for after $select2Text
+              | $scopeParentAndId - array with scope parent and id
+              |
+              */
+              $limitPage   = 10; // default 6
+              $extraScopes = ["active"] // scope previously declared 
+              $prefix      = 'otherRelation.description'; //  or other column
+              $scopeParentAndId = [
+                'scope' => $parentId,
+              ];
+              $suffix = 'otherRelation.description'; //  or other column
+
+             return self::select2easy(
+                $term,
+                $page,
+                $select2Search,
+                $select2Text,
+                $limitPage = 6,
+                $extraScopes = [],
+                $prefix = null,
+                $scopeParentAndId,
+                $suffix = null,
+            );
           }
-      ```    
+      }
+      ```
 
 ### Cascade (select2 parents/dependent)
 
 Tem momentos que é necessário que um select seja dependente de outro para poder exibir os dados pré filtrados, por 
 exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` no select2 `pai` (*parent*) o 
 `id` do select2 do`filho` (*child*):
-  - Exemplo:////////////////////////////////////////////////////////////////
+  - Exemplo:
     ```html
     <select id="parent"
         ...
@@ -349,6 +338,7 @@ disponibilzação para as proximas versões de um *component* completamente func
           </script>
       @endpush
       ```
+    - Ou publique o component 
 - Recomendo criar novos components encapsulando-do, Exemplo de uso:
      - `resources/views/components/select2/category.blade.php`
     ```php

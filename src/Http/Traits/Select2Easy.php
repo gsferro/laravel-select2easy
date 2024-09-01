@@ -94,7 +94,6 @@ trait Select2Easy
     ) {
         // set array return
         $resultSet = [];
-        $textPrefix = '';
 
         // pega os itens
         foreach ($search as $elem) {

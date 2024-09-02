@@ -27,13 +27,17 @@ Select2 | ^4.0.13
     ```
 
 ## Configuração
-- Diretrivas blade, Coloque as no seu arquivo de layout    
-  ``` php
-  @select2easyCss()
-  @select2easyJs()
-  ```
+- Diretrivas blade, Coloque as no seu arquivo de layout
+  - No final do header: 
+    ``` php
+    @select2easyCss()
+    ```
+  - No final do body: 
+    ``` php
+    @select2easyCss()
+    ```
 
-- Caso utilize framework bootstrap 5:
+- Caso utilize framework `bootstrap 5`, adicione no header abaixo do `@select2easyCss()`:
   ``` php
   @select2easyThemeBootstrap5()
   ```
@@ -44,7 +48,7 @@ Select2 | ^4.0.13
        });
     ```
     - Ou vc pode utilizar o `@select2easyOptionsJs()` para configurar o plugin para usar o `theme` e também já deixara 
-      utilizando via `modal` ou outro `parent`
+      utilizando via `modal` ou outro `parent`,  basta adicionar após `select2easyJs()`
     
   - É necesário fazer um ajuste no css para quando o select2 estiver `disabled` e no tamanho do `input`
     ``` php
@@ -54,8 +58,10 @@ Select2 | ^4.0.13
     ``` php
     @select2easyThemeBootstrap5Advance()
     ```
-- Caso você queira aplicar a instância do plugin `select2` em todas as tags `select`, adicione: `@select2easyApplyAnyJs()`
-  
+- Caso você queira aplicar a instância do plugin `select2` em todas as tags `select`, adicione após `select2easyJs()`:
+     ``` php
+    @select2easyApplyAnyJs()
+     ```
 ## Implementação
 
 - Você pode implementar quantos metodos quiser, para chamar a modelo em varias ocaciões dentro do projeto

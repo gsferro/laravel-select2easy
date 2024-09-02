@@ -306,13 +306,13 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
   
   - Exemplo de metodo para o `text`:
     ```php
-    # Ou, pode ser usando assim: return view
-    private function sl2MarkupText(string $text, Country $model): Illuminate\View\View
+    # Ou, pode ser usando assim: return view renderizada
+    private function sl2MarkupText(string $text, Country $model): string
     {
         return view('country', [
             'text' => $text,
             'model' => $model
-        ]);
+        ])->render();
       }
       ```
     - Renderização do metodo:

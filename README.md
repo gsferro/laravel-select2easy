@@ -48,7 +48,7 @@ Select2 | ^4.0.13
        });
     ```
     - Ou vc pode utilizar o `@select2easyOptionsJs()` para configurar o plugin para usar o `theme` e também já deixara 
-      utilizando via `modal` ou outro `parent`,  basta adicionar após `select2easyJs()`
+      utilizando via `modal` ou outro `parent`,  basta adicionar antes `select2easyJs()`
     
   - É necesário fazer um ajuste no css para quando o select2 estiver `disabled` e no tamanho do `input`
     ``` php

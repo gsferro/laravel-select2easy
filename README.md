@@ -296,7 +296,7 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
                    <img src="'.$model->image.'" class="rounded-circle" alt="image">
                    '.$model->name.'
                  </span>
-              </span>'
+              </span>';
       }
    
       ```
@@ -307,12 +307,12 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
   - Exemplo de metodo para o `text`:
     ```php
     # Ou, pode ser usando assim: return view
-    private function sl2MarkupText(string $text, Country $model): view
+    private function sl2MarkupText(string $text, Country $model): Illuminate\View\View
     {
         return view('country', [
             'text' => $text,
             'model' => $model
-        ])
+        ]);
       }
       ```
     - Renderização do metodo:

@@ -69,10 +69,10 @@ class Select2EasyServiceProvider extends ServiceProvider
                     "<script src='/vendor/select2easy/select2/js/select2.js'></script>";
         });
         Blade::directive("select2easyOptionsJs", function(){
-            return 	"<script src='/vendor/select2easy/js/select2_options.js'></script>";
+            return 	"<script src='/vendor/select2easy/select2/js/select2_options.js'></script>";
         });
         Blade::directive("select2easyApplyAnyJs", function(){
-            return 	"<script src='/vendor/select2easy/js/select2_apply_any.js'></script>";
+            return 	"<script src='/vendor/select2easy/select2/js/select2_apply_any.js'></script>";
         });
     }
 }

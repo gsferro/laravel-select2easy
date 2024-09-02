@@ -8,24 +8,25 @@
 </p>
 
 ------
-### Instalação:
-
-```shell 
-composer require gsferro/select2easy -W
-```
-
-### Pacotes Dependências:
+## Pacotes Dependências:
 Package | Versão
 --------|-----------
-jquery | ^3.*
+Jquery | ^3.*
 Select2 | ^4.0.13
 
-### Publish
-```composer 
-php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2EasyServiceProvider" --force
-```
+## Instalação
 
-### Config
+1. Instalar o pacote via Composer:
+    ```shell 
+    composer require gsferro/select2easy -W
+    ```
+
+2. Publicar o pacote:
+    ```composer 
+    php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2EasyServiceProvider" --force
+    ```
+
+## Configuração
 - Diretrivas blade, Coloque as no seu arquivo de layout    
   ``` php
   @select2easyCss()
@@ -55,7 +56,7 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
     ```
 - Caso você queira aplicar a instância do plugin `select2` em todas as tags `select`, adicione: `@select2easyApplyAnyJs()`
   
-### Uso
+## Implementação
 
 - Você pode implementar quantos metodos quiser, para chamar a modelo em varias ocaciões dentro do projeto
     - Ex: Model User
@@ -174,7 +175,7 @@ php artisan vendor:publish --provider="Gsferro\Select2Easy\Providers\Select2Easy
       }
       ```
 
-### Cascade (select2 parents/dependent)
+## Cascade (select2 parents/dependent)
 
 Tem momentos que é necessário que um select seja dependente de outro para poder exibir os dados pré filtrados, por 
 exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` no select2 `pai` (*parent*) o 
@@ -215,55 +216,123 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
     ```
 
     - Caso vc esteja usando as versões do `php` >8, pode utilizar o `Named Arguments`:
-     ```php
+       ```php
+      public static function sl2Name(string $term, int $page, string $parentId)
+      {
+          $select2Search = [
+          "name",
+          ];
+          $select2Text = "name";
+          $scopeParentAndId = [
+              'parent' => $parentId,
+          ];
+
+          return self::select2easy(
+              term: $term,
+              page: $page,
+              select2Search: $select2Search,
+              select2Text: $select2Text,
+              scopeParentAndId: $scopeParentAndId
+          );
+      }
+      ```
+
+    - Inspirado neste javascript [select2-cascade.js](https://gist.github.com/ajaxray/187e7c9a00666a7ffff52a8a69b8bf31) 
+
+## Prefixos e Sufixos  (pode ser um relacionamento ou coluna)
+
+- Prefixo: adicionado antes do texto do select2
+- Sufixo: adicionado depois do texto do select2
+
+## Use Templating (Markups)
+
+- O pacote `select2easy` esta preparado para utilizar o recurso de `Templating` do select2, que permite formatar o 
+  título (`text`) e o html exibido no plugin `select2`. 
+- Para isso, basta criar na model os metodos tanto para o `text` quanto para o  `html`, e o plugin fará o resto. 
+- O `text` é o que sera exibido no select apos a escolha e o `html` é o que sera  exibido quando abre a busca de 
+  seleção ao retorno no `ajax`. 
+- Você também pode utilizar separadamente tanto o `text` quanto `html`, basta passar para o array `$markups` o item 
+  desejado. 
+- Cada método receberá 2 parametros no momento de ser invocado pelo pacote:  `string $text` e `Model $model`, sendo a 
+  Model, sendo a model a propria utilizada, e estes metodos devem retornar o `html` que sera rendereziado.
+
+  - Exemplo de uso:
+    ```php
     public static function sl2Name(string $term, int $page, string $parentId)
     {
         $select2Search = [
         "name",
         ];
         $select2Text = "name";
-        $scopeParentAndId = [
-            'parent' => $parentId,
+       
+        $markups = [
+            'text' => 'sl2MarkupText',
+            'html' => 'sl2MarkupHtml',
         ];
 
         return self::select2easy(
-            term: $term,
-            page: $page,
-            select2Search: $select2Search,
-            select2Text: $select2Text,
-            scopeParentAndId: $scopeParentAndId
-        );
-    }
+              term: $term,
+              page: $page,
+              select2Search: $select2Search,
+              select2Text: $select2Text,
+              markups: $markups
+          );
+      }
     ```
+  - Exemplo de metodo para o `html`:
+    ```php
+    # Pode ser usando assim: return string
+    private function sl2MarkupHtml($text, Country $model): string
+    {
+        return '<span class="select2-selection__rendered" id="select2_country-container" 
+                   role="textbox"  aria-readonly="true" title="'.$text.'">
+                 <span>
+                   <img src="'.$model->image.'" class="rounded-circle" alt="image">
+                   '.$model->name.'
+                 </span>
+              </span>'
+      }
+   
+      ```
+    <img src="readme/images/html.png" alt="html" alt="html">
   
-    - Inspirado neste javascript [select2-cascade.js](https://gist.github.com/ajaxray/187e7c9a00666a7ffff52a8a69b8bf31) 
+  - Exemplo de metodo para o `text`:
+    ```php
+    # Ou, pode ser usando assim: return view
+    private function sl2MarkupText($text, Country $model): view
+    {
+        return view('country', [
+            'text' => $text,
+            'model' => $model
+        ])
+      }
+      ```
+      <img src="readme/images/text.png" alt="html"  alt="text">
 
-### Prefixos e Sufixos  (pode ser um relacionamento ou coluna)
+  - Como você pode ter multiplos metodos para o `select2easy` na model, você pode utilizar varios tipos de formatação, 
+    conforme a necessidade ou fazer reusos.
 
-- Prefixo: adicionado antes do texto do select2
-- Sufixo: adicionado depois do texto do select2
-
-### Selected
+## Selected
 
 - Links do plugin
     - https://select2.org/data-sources/ajax#default-pre-selected-values
     - https://select2.org/programmatic-control/add-select-clear-items
 
 - melhor opção:
-```html
-<select id="select2easy" name="select2easy" class="form-control select2easy"
-      data-sl2_method="sl2"
-      data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
->
-    <option value="{{ $model->teams_id }}" selected>{{ \App\Models\Teams::find($model->teams_id)->name }}</option>
-    <!-- ou usar via relacionamento (se não for 1xN ou NxN -->
-    <option value="{{ $model->teams->id }}" selected>{{ $model->teams->name }}</option>
-    <!-- prefix -->
-    <option value="{{ $model->teams->id }}" selected>{{ $model->teams->id }} - {{ $model->teams->name }}</option>
-</select>
-```
+  ```html
+  <select id="select2easy" name="select2easy" class="form-control select2easy"
+        data-sl2_method="sl2"
+        data-sl2_hash="{{ Crypt::encryptString('App\Models\Teams') }}" <!-- recommend -->
+  >
+      <option value="{{ $model->teams_id }}" selected>{{ \App\Models\Teams::find($model->teams_id)->name }}</option>
+      <!-- ou usar via relacionamento (se não for 1xN ou NxN -->
+      <option value="{{ $model->teams->id }}" selected>{{ $model->teams->name }}</option>
+      <!-- prefix -->
+      <option value="{{ $model->teams->id }}" selected>{{ $model->teams->id }} - {{ $model->teams->name }}</option>
+  </select>
+  ```
 
-### Para versões do Laravel > 7
+## Para versões do Laravel > 7
 
 Como a ideia, pelo menos nas versões `v1.*` do pacote, é manter a compatiblidade com todas as versões do `Laravel`, 
 desde a `L5` até a atual `L11`, não esta disponivel um *component*, mas fica aqui uma sugestão e possivel 
@@ -271,13 +340,13 @@ disponibilzação para as proximas versões de um *component* completamente func
 
 - Crie, caso não exista: `resources/views/components/forms/label.blade.php`
     ```php
-        @props([
-            'label',
-            'isRequired' => false,
-        ])
-        <label  {{ $attributes->merge([ 'class' => 'form-label' ])->whereDoesntStartWith('label') }}>
-            {{ $label }} {{ $isRequired ? '*' : '' }}
-        </label>
+    @props([
+        'label',
+        'isRequired' => false,
+    ])
+    <label  {{ $attributes->merge([ 'class' => 'form-label' ])->whereDoesntStartWith('label') }}>
+        {{ $label }} {{ $isRequired ? '*' : '' }}
+    </label>
     ```
 
   - Crie: `resources/views/components/select2/easy.blade.php`
@@ -341,40 +410,40 @@ disponibilzação para as proximas versões de um *component* completamente func
     - Ou publique o component 
 - Recomendo criar novos components encapsulando-do, Exemplo de uso:
      - `resources/views/components/select2/category.blade.php`
-    ```php
-    @props([
-        'col',
-        'sl2' => null,
-        'value' => null,
-        'name' => null,
-        'useRequest' => null,
-    ])
-    
-    @php
-        $name = $name ?? 'category_id';
-        $value = isset($useRequest)
-            ? app('request')->input($name)
-            : $value;
-    
-        $appModel = '\App\Models\Category';
-    @endphp
-    
-    <x-select2.easy
-        :col="$col ?? '12'"
-        :col-md="$colMd ?? '4'"
-        label="Categoria"
-        :name="$name"
-        :sl2="$sl2"
-        :app-model="$appModel"
-        {{ $attributes }}
-    >
-        @if (!empty($value))
-            <option value="{{ $value }}">
-                {{ $appModel::find($value)->name }}
-            </option>
-        @endif
-    </x-select2.easy>
-    ```
+       ```php
+       @props([
+           'col',
+           'sl2' => null,
+           'value' => null,
+           'name' => null,
+           'useRequest' => null,
+       ])
+       
+       @php
+           $name = $name ?? 'category_id';
+           $value = isset($useRequest)
+               ? app('request')->input($name)
+               : $value;
+       
+           $appModel = '\App\Models\Category';
+       @endphp
+       
+       <x-select2.easy
+           :col="$col ?? '12'"
+           :col-md="$colMd ?? '4'"
+           label="Categoria"
+           :name="$name"
+           :sl2="$sl2"
+           :app-model="$appModel"
+           {{ $attributes }}
+       >
+           @if (!empty($value))
+               <option value="{{ $value }}">
+                   {{ $appModel::find($value)->name }}
+               </option>
+           @endif
+       </x-select2.easy>
+       ```
   - No formulário:
     ```php
     # usando request para pegar o value (filtro e etc)
@@ -383,6 +452,17 @@ disponibilzação para as proximas versões de um *component* completamente func
     <x-select2.category :value="old('category_id', $model->category_id)"  data-sl2_child="#subcategory_id" required />
     ```
 
+## Troubleshooting
 
-### License
-Laravel Localization is an open-sourced laravel package licensed under the MIT license
+- Erro: "Select2easy não está funcionando":
+    1. Verifique se o pacote está instalado corretamente
+    1. Verifique se o arquivo de layout está configurado corretamente
+  
+- Erro: "Select2easy não está aparecendo"
+    1. Verifique se o select2easy está sendo chamado corretamente
+    2. Verifique se o tema está configurado corretamente
+    3. Verifique se a model esta configurado corretamente
+    4. Verifique se o html esta corretamente implementado 
+
+## License
+Laravel Localization is an open-sourced laravel package licensed under the [MIT license](LICENSE.md). 

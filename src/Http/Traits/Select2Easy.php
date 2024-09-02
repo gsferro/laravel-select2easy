@@ -2,6 +2,7 @@
 
 namespace Gsferro\Select2Easy\Http\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 trait Select2Easy
@@ -20,6 +21,8 @@ trait Select2Easy
      * @param  array  $scopeParentAndId  An array of parent scopes and their IDs to apply to the query. Default is an
      *     empty array.
      * @param  string|null  $suffix  A suffix to add to the result IDs. Default is null.
+     * @param  array  $markups  An array of markups to apply to the results. Default is an empty array.
+     *
      * @return mixed The result set of the select2easy search.
      */
     public function scopeSelect2easy(
@@ -32,7 +35,8 @@ trait Select2Easy
         array $extraScopes = [],
         string $prefix = null,
         array $scopeParentAndId = [],
-        string $suffix = null
+        string $suffix = null,
+        array $markups = [],
     ) {
         // varre os campos que podem ser pesquisados
         foreach ($select2Search as $field) {
@@ -72,7 +76,7 @@ trait Select2Easy
         $search = $query->skip($offset)->take($limitPage)->get();
 
         // envia pro processamento e devolve pro plugin
-        return $this->select2EasyResultSet($search, $select2Text, $limitPage, $prefix, $suffix);
+        return $this->select2EasyResultSet($search, $select2Text, $limitPage, $prefix, $suffix, $markups) ;
     }
 
     /**
@@ -83,6 +87,7 @@ trait Select2Easy
      * @param  int  $limitPage  The maximum number of items per page.
      * @param  string|null  $prefix  The prefix to add to the text display.
      * @param  string|null  $suffix  The suffix to add to the text display.
+     * @param  array  $markups  An array of markups to apply to the results. Default is an empty array.
      * @return array The result set containing the items and the next page flag.
      */
     protected function select2EasyResultSet(
@@ -90,16 +95,15 @@ trait Select2Easy
         string $select2Text,
         int $limitPage,
         string $prefix = null,
-        string $suffix = null
+        string $suffix = null,
+        array $markups = [],
     ) {
         // set array return
         $resultSet = [];
+        $textPrefix = '';
 
         // pega os itens
         foreach ($search as $elem) {
-            // todo v2.0 - cria o array repo para uso de markup
-            //$resultSet[ "repo" ][] = $elem;
-
             // default
             $text = $elem->{$select2Text};
 
@@ -123,10 +127,20 @@ trait Select2Easy
                 $text = $text.' - '.$suffixValue;
             }
 
-            // item de exibição padrão
+            // with markups
+            $htmlFunc = $markups['html'] ?? null;
+            $textFunc = $markups['text'] ?? null;
+
+            // runner functions
+            $viewText = !isset($textFunc) ? $text : $this->$textFunc($text, $elem);
+            $viewHtml = !isset($htmlFunc) ? $text : $this->$htmlFunc($text, $elem);
+
+            // result set
             $resultSet["itens"][] = [
                 'id' => $elem->{$this->primaryKey},
-                'text' => $text,
+                'text' => $viewText,
+                'html' => $viewHtml,
+                'title' => $text,
             ];
         }
 

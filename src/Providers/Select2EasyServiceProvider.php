@@ -30,9 +30,10 @@ class Select2EasyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../public' => public_path('vendor/select2easy'),
         ], 'public');
-        $this->publishes([
+        // TODO : publicar views
+        /*$this->publishes([
             __DIR__ . '/../resources/components' => resource_path('views/components'),
-        ], 'views');
+        ], 'views');*/
 
         /*
         |---------------------------------------------------

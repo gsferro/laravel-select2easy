@@ -246,15 +246,15 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
 
 ## Use Templating (Markups)
 
-- O pacote `select2easy` esta preparado para utilizar o recurso de `Templating` do select2, que permite formatar o 
+- O pacote `select2easy` esta preparado para utilizar o recurso de `Templating`, que permite formatar o 
   título (`text`) e o html exibido no plugin `select2`. 
 - Para isso, basta criar na model os metodos tanto para o `text` quanto para o  `html`, e o plugin fará o resto. 
 - O `text` é o que sera exibido no select apos a escolha e o `html` é o que sera  exibido quando abre a busca de 
   seleção ao retorno no `ajax`. 
 - Você também pode utilizar separadamente tanto o `text` quanto `html`, basta passar para o array `$markups` o item 
   desejado. 
-- Cada método receberá 2 parametros no momento de ser invocado pelo pacote:  `string $text` e `Model $model`, sendo a 
-  Model, sendo a model a propria utilizada, e estes metodos devem retornar o `html` que sera rendereziado.
+- Cada método receberá 2 parametros no momento de ser invocado pelo pacote:  `string $text` e `Model $model`, sendo 
+  a instancia da a propria model (`$this`)  utilizada, e estes metodos devem retornar o `html` que sera rendereziado.
 
   - Exemplo de uso:
     ```php
@@ -282,7 +282,7 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
   - Exemplo de metodo para o `html`:
     ```php
     # Pode ser usando assim: return string
-    private function sl2MarkupHtml($text, Country $model): string
+    private function sl2MarkupHtml(string $text, Country $model): string
     {
         return '<span class="select2-selection__rendered" id="select2_country-container" 
                    role="textbox"  aria-readonly="true" title="'.$text.'">
@@ -294,12 +294,14 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
       }
    
       ```
-    <img src="readme/images/html.png" alt="html" alt="html">
+      - Renderização do metodo:
+      
+        <img src="readme/images/html.png" alt="html" alt="html">
   
   - Exemplo de metodo para o `text`:
     ```php
     # Ou, pode ser usando assim: return view
-    private function sl2MarkupText($text, Country $model): view
+    private function sl2MarkupText(string $text, Country $model): view
     {
         return view('country', [
             'text' => $text,
@@ -307,10 +309,12 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
         ])
       }
       ```
+    - Renderização do metodo:
+
       <img src="readme/images/text.png" alt="html"  alt="text">
 
-  - Como você pode ter multiplos metodos para o `select2easy` na model, você pode utilizar varios tipos de formatação, 
-    conforme a necessidade ou fazer reusos.
+  - Como você pode ter multiplos metodos para usar o `select2easy` na model, você pode utilizar varios tipos de 
+    formatação, conforme a necessidade ou fazer reusos de metodos e views.
 
 ## Selected
 
@@ -332,7 +336,7 @@ exemplo `Estado > Cidades`. Para tal, basta colocar o atributo `data-sl2_child` 
   </select>
   ```
 
-## Para versões do Laravel > 7
+## Para Laravel > 7
 
 Como a ideia, pelo menos nas versões `v1.*` do pacote, é manter a compatiblidade com todas as versões do `Laravel`, 
 desde a `L5` até a atual `L11`, não esta disponivel um *component*, mas fica aqui uma sugestão e possivel 
@@ -349,66 +353,66 @@ disponibilzação para as proximas versões de um *component* completamente func
     </label>
     ```
 
-  - Crie: `resources/views/components/select2/easy.blade.php`
-      ```php
-      @props([
-          'name',
-          'groupClass',
-          'appModel',
-          'col' => 12,
-          'colMd' => 4,
-          'id'    => null,
-          'sl2'    => 'sl2Name',
-          'label' => null,
-      ])
+- Crie: `resources/views/components/select2/easy.blade.php`
+    ```php
+    @props([
+        'name',
+        'groupClass',
+        'appModel',
+        'col' => 12,
+        'colMd' => 4,
+        'id'    => null,
+        'sl2'    => 'sl2Name',
+        'label' => null,
+    ])
     
-      @section('vendor-styles')
-          @once
-              @select2easyCss()
-              <link href="{{ asset('vendor/select2easy/select2/css/select2-bootstrap.css') }}" rel='stylesheet'
-                    type='text/css'>
-          @endonce
-      @endsection
+    @section('vendor-styles')
+        @once
+            @select2easyCss()
+            <link href="{{ asset('vendor/select2easy/select2/css/select2-bootstrap.css') }}" rel='stylesheet'
+                  type='text/css'>
+        @endonce
+    @endsection
     
-      @php
-          $id = $id ?? $name;
-      @endphp
+    @php
+        $id = $id ?? $name;
+    @endphp
     
-      <div class="col-{{ $col }} col-md-{{ $colMd }} {{ $groupClass ?? '' }}">
-          @if($label)
-              <x-forms.label
-                      for="{{ $id }}"
-                      class="{{ $labelClass ?? '' }}"
-                      :label="$label"
-                      :isRequired="$attributes->offsetExists('required')"
-              />
-          @endif
-          <select
-                  name="{{ $name }}"
-                  id="{{ $id }}"
-                  data-sl2_method="{{ $sl2 }}"
-                  data-sl2_hash="{{ Crypt::encryptString($appModel) }}"
-                  {{ $attributes
-                      ->merge(['class' => 'form-control select2easy'])
-                      ->whereDoesntStartWith('col')
-                  }}
+    <div class="col-{{ $col }} col-md-{{ $colMd }} {{ $groupClass ?? '' }}">
+        @if($label)
+            <x-forms.label
+                    for="{{ $id }}"
+                    class="{{ $labelClass ?? '' }}"
+                    :label="$label"
+                    :isRequired="$attributes->offsetExists('required')"
+            />
+        @endif
+        <select
+                name="{{ $name }}"
+                id="{{ $id }}"
+                data-sl2_method="{{ $sl2 }}"
+                data-sl2_hash="{{ Crypt::encryptString($appModel) }}"
+                {{ $attributes
+                    ->merge(['class' => 'form-control select2easy'])
+                    ->whereDoesntStartWith('col')
+                }}
         >
-              {{ $slot }}
-          </select>
-      </div>
+            {{ $slot }}
+        </select>
+    </div>
     
-      @push('js')
-          <script type="text/javascript">
-              $(() => {
-                  $('#{{$id}}').select2easy({
-                      theme: 'bootstrap-5',
-                  });
-              });
-          </script>
-      @endpush
-      ```
-    - Ou publique o component 
-- Recomendo criar novos components encapsulando-do, Exemplo de uso:
+    @push('js')
+        <script type="text/javascript">
+            $(() => {
+                $('#{{$id}}').select2easy({
+                    theme: 'bootstrap-5',
+                });
+            });
+        </script>
+    @endpush
+    ```
+  - Ou publique o component 
+- Recomendo criar novos components encapsulando-o, Exemplo de uso:
      - `resources/views/components/select2/category.blade.php`
        ```php
        @props([

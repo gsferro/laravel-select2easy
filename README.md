@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://banners.beyondco.de/Select2Easy.png?theme=dark&packageManager=composer+require&packageName=gsferro%2Fselect2easy&pattern=squaresInSquares&style=style_1&description=Uso+f%C3%A1cil+e+gen%C3%A9rico+do+plugin+Select2+Ajax+no+Laravel&md=1&showWatermark=0&fontSize=100px&images=document-search" alt="select2easy">
+    <img src="https://banners.beyondco.de/Select2Easy.png?theme=dark&packageManager=composer+require&packageName=gsferro%2Fselect2easy&pattern=autumn&style=style_1&description=Uso+f%C3%A1cil+e+gen%C3%A9rico+do+plugin+Select2+Ajax+no+Laravel&md=1&showWatermark=0&fontSize=100px&images=document-search" alt="select2easy">
     <p align="center">
         <a href="https://packagist.org/packages/gsferro/select2easy"><img alt="Latest Version" src="https://img.shields.io/packagist/v/gsferro/select2easy"></a>
         <a href="https://packagist.org/packages/gsferro/select2easy"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/gsferro/select2easy"></a>

@@ -58,6 +58,19 @@ Select2 | ^4.0.13
     ``` php
     @select2easyThemeBootstrap5Advance()
     ```
+  - É necessário ajustar o css para funcionar com as cores do `validate`:
+    ``` css
+      /* ajustando select2 validado: is-invalid */
+      .is-invalid+.select2-container--bootstrap-5 .select2-selection, 
+      .was-validated select:invalid+.select2-container--bootstrap-5 .select2-selection {
+          border-color: var(--falcon-form-invalid-border-color) !important;
+      }
+      /* ajustando select2 validado: is-valid */
+      .is-valid+.select2-container--bootstrap-5 .select2-selection, 
+      .was-validated select:valid+.select2-container--bootstrap-5 .select2-selection {
+        border-color: var(--falcon-form-valid-border-color) !important;
+      }
+    ```
 - Caso você queira aplicar a instância do plugin `select2` em todas as tags `select`, adicione após `select2easyJs()`:
      ``` php
     @select2easyApplyAnyJs()
